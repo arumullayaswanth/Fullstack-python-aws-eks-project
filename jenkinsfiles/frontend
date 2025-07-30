@@ -13,10 +13,6 @@ pipeline {
         AWS_ECR_REPO_NAME = 'frontend'                      //replace ECR repository name
         AWS_DEFAULT_REGION = 'us-east-1'                 // replace AWS region
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
-        GIT_REPO_NAME = "Fullstack-python-aws-eks-project"  // replace your github rep name
-        GIT_EMAIL = "yaswanth.arumulla@gmail.com"            //replacr your github email id
-        GIT_USER_NAME = "arumullayaswanth"                  // replace your user name
-        YAML_FILE = "frontend.yaml"
 
     }
     stages {
@@ -144,9 +140,15 @@ pipeline {
 
         // no change in this stage Except dir name=dir('kubernetes-files')
         stage('Update Deployment file') {
+            environment {
+                GIT_REPO_NAME = "Fullstack-python-aws-eks-project"      // replace your github rep name
+                GIT_EMAIL = "yaswanth.arumulla@gmail.com"    //replacr your email id
+                GIT_USER_NAME = "arumullayaswanth"           // replace your user name
+                YAML_FILE = "frontend.yaml"
+            }
             steps {
-
                 dir('kubernetes-files') {
+                    sh 'ls -la'
                     withCredentials([string(credentialsId: 'my-git-pattoken', variable: 'git_token')]) {
                         sh '''
                             git config user.email "${GIT_EMAIL}"
@@ -169,14 +171,36 @@ pipeline {
 
     // no change in this stage Except your email id:yaswanth.arumulla@gmail.com
     post {
-        always {
-            emailext attachLog: true,
-                subject: "'${currentBuild.result}'",
-                body: "Project: ${env.JOB_NAME}<br/>" +
-                       "Build Number: ${env.BUILD_NUMBER}<br/>" +
-                        "URL: ${env.BUILD_URL}<br/>",
-                to: 'yaswanth.arumulla@gmail.com',
-                attachmentsPattern: 'trivyfs.txt,trivyimage.txt,**/dependency-check-report.xml'
+    always {
+        script {
+            // Ensure required files exist or create dummy files
+            sh 'if [ ! -f trivyfs.txt ]; then echo "No trivyfs report found" > trivyfs.txt; fi'
+            sh 'if [ ! -f trivyimage.txt ]; then echo "No trivy image report found" > trivyimage.txt; fi'
+            sh 'if [ ! -f dependency-check-report.xml ]; then echo "No dependency check report found" > dependency-check-report.xml; fi'
+        }
+        emailext(
+            from: 'yaswanth.arumulla@gmail.com',
+            replyTo: 'yaswanth.arumulla@gmail.com',
+            attachLog: true,
+            subject: "Build ${currentBuild.result}",
+            body: """
+                <html>
+                <body>
+                    <div style="background-color: #FFA07A; padding: 10px; margin-bottom: 10px;">
+                        <p style="color: white; font-weight: bold;">Project: ${env.JOB_NAME}</p>
+                    </div>
+                    <div style="background-color: #90EE90; padding: 10px; margin-bottom: 10px;">
+                        <p style="color: white; font-weight: bold;">Build Number: ${env.BUILD_NUMBER}</p>
+                    </div>
+                    <div style="background-color: #87CEEB; padding: 10px; margin-bottom: 10px;">
+                        <p style="color: white; font-weight: bold;">URL: ${env.BUILD_URL}</p>
+                    </div>
+                </body>
+                </html>
+            """,
+            to: 'yaswanth.arumulla@gmail.com',
+            mimeType: 'text/html',
+            attachmentsPattern: 'trivyfs.txt,trivyimage.txt,**/dependency-check-report.xml')
            }
       }
 }
