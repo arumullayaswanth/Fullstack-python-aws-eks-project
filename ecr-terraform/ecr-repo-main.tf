@@ -5,7 +5,7 @@ provider "aws" {
 locals {
   services = [
     "frontend",
-    "backend",
+    "backend"
   ]
 }
 

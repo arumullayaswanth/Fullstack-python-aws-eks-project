@@ -327,14 +327,7 @@ This allows SonarQube to notify Jenkins after analysis is complete.
      - version : `SonarQube Scanner 7.0.1.4817` 
       - it is least version
 
-4. Scroll to **NodeJS installations** section:
-   - Click **Add NodeJs**
-   - **Name**: `nodejs`
-   - ✅ Check **Install automatically**
-       - version : `Nodejs 23.7.0` 
-          - it is least version
-
-5. Scroll to **Dependency-check installation** section:
+4. Scroll to **Dependency-check installation** section:
    - Click **Add Dependency-check**
    - **Name**: `DP-check`
    - ✅ Check **Install automatically**
@@ -342,20 +335,6 @@ This allows SonarQube to notify Jenkins after analysis is complete.
        - select `install from github.com`
           - version : `dependency-check-12.0.2`
              - it is least version
-
-6. Scroll to **Docker** section:
-   - Click **Add Docker**
-   - **Name**: `Docker`
-   - ✅ Check **Install automatically**
-     - Add Installer
-       - select `Download from docker.com`
-          - version : `least`
-             - it is least version
-
-7. Scroll to **Maven** section:
-   - Click **Add Maven**
-   - **Name**: `maven`
-   - ✅ Check **Install automatically**
 
 4. Click **Save**.
 ---
@@ -444,7 +423,7 @@ Follow these steps to set up **email notifications in Jenkins using your Gmail a
  - Pipeline:
    - Definition : `Pipeline script from SCM`
    - SCM : `Git`
-   - Repositories : `https://github.com/arumullayaswanth/Swiggy-GitOps-project.git`
+   - Repositories : `https://github.com/arumullayaswanth/Fullstack-python-aws-eks-project.git`
    - Branches to build : `*/master`
    - Script Path : `eks-terraform/eks-jenkinsfile`
    - Apply
