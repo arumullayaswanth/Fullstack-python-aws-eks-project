@@ -12,9 +12,6 @@ pipeline {
         AWS_DEFAULT_REGION = 'us-east-1'                 // replace AWS region
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
         GIT_REPO_NAME = "Fullstack-python-aws-eks-project"      // replace your github rep name
-        GIT_EMAIL = "yaswanth.arumulla@gmail.com"    //replacr your email id
-        GIT_USER_NAME = "arumullayaswanth"           // replace your user name
-        YAML_FILE = "backend.yaml"
     }
     stages {
         // no change in this stage
@@ -124,6 +121,11 @@ pipeline {
 
         // no change in this stage Except dir name=dir('kubernetes-files')
         stage('Update Deployment file') {
+            environment  {
+                GIT_EMAIL = "yaswanth.arumulla@gmail.com"    //replacr your email id
+                GIT_USER_NAME = "arumullayaswanth"           // replace your user name
+                YAML_FILE = "backend.yaml"
+            }
             steps {
                 dir('kubernetes-files') {
                     withCredentials([string(credentialsId: 'my-git-pattoken', variable: 'git_token')]) {
