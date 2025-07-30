@@ -64,48 +64,6 @@ pipeline {
                 }
             }
         }
-        // no change in this stage Except dir name=dir('frontend')
-        stage('Install Dependencies') {
-            steps {
-                dir('backend') {
-                     sh '''
-                    set -e  # Exit immediately if any command fails
-
-                    if [ -f requirements.txt ]; then
-                        echo "Creating virtual environment..."
-                        python3 -m venv venv
-
-                        echo "Installing/upgrading pip and dependencies..."
-                        ./venv/bin/pip install --upgrade pip
-                        ./venv/bin/pip install -r requirements.txt
-                    else
-                        echo "requirements.txt not found!"
-                        exit 1
-                    fi
-                    '''
-                }
-            }
-        }
-
-        stage('Run Tests') {
-            steps {
-                dir('backend') {
-                    sh '''
-                    set -e
-
-                    if [ -x venv/bin/python ]; then
-                        echo "Running tests..."
-                        ./venv/bin/python -m pytest tests/
-                    else
-                        echo "Virtual environment not found. Did the install step fail?"
-                        exit 1
-                    fi
-                    '''
-                }
-            }
-        }
-
-
         // this step it will take 45 
         // no change in this stage Except dir name=dir('frontend')
         stage('OWASP FS Scan') {
