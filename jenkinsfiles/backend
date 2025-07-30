@@ -71,9 +71,8 @@ pipeline {
                     sh '''
                     if [ -f requirements.txt ]; then
                         python3 -m venv venv
-                        . venv/bin/activate
-                        pip install --upgrade pip
-                        pip install -r requirements.txt
+                        ./venv/bin/pip install --upgrade pip
+                        ./venv/bin/pip install -r requirements.txt
                     else
                         echo "requirements.txt not found!"
                         exit 1
