@@ -1,10 +1,11 @@
+
 provider "aws" {
   region = "us-east-1"  # Specify your desired region
 }
 
  #Creating IAM role for EKS
   resource "aws_iam_role" "master" {
-    name = "veera-eks-master"
+    name = "yaswanth-eks-master1"
 
     assume_role_policy = jsonencode({
       "Version": "2012-10-17",
@@ -36,7 +37,7 @@ provider "aws" {
   }
 
   resource "aws_iam_role" "worker" {
-    name = "veera-eks-worker"
+    name = "yaswanth-eks-worker1"
 
     assume_role_policy = jsonencode({
       "Version": "2012-10-17",
@@ -53,7 +54,7 @@ provider "aws" {
   }
 
   resource "aws_iam_policy" "autoscaler" {
-    name = "veera-eks-autoscaler-policy"
+    name = "veera-eks-autoscaler-policy1"
     policy = jsonencode({
       "Version": "2012-10-17",
       "Statement": [
@@ -106,7 +107,7 @@ provider "aws" {
 
   resource "aws_iam_instance_profile" "worker" {
     depends_on = [aws_iam_role.worker]
-    name       = "veera-eks-worker-new-profile"
+    name       = "yaswanth-eks-worker-new-profile1"
     role       = aws_iam_role.worker.name
   }
  
@@ -121,7 +122,7 @@ data "aws_subnet" "subnet-1" {
  vpc_id = data.aws_vpc.main.id
  filter {
     name = "tag:Name"
-    values = ["Jumphost-subnet1"]
+    values = ["Public-Subnet-1"]
  }
 }
 
@@ -129,7 +130,7 @@ data "aws_subnet" "subnet-2" {
  vpc_id = data.aws_vpc.main.id
  filter {
     name = "tag:Name"
-    values = ["Jumphost-subnet2"]
+    values = ["Public-subnet2"]
  }
 }
 data "aws_security_group" "selected" {
@@ -158,28 +159,30 @@ data "aws_security_group" "selected" {
       aws_iam_role_policy_attachment.AmazonEKSServicePolicy,
       aws_iam_role_policy_attachment.AmazonEKSVPCResourceController,
     ]
-  }
+  } 
  resource "aws_eks_node_group" "node-grp" {
     cluster_name    = aws_eks_cluster.eks.name
-    node_group_name = "project-node-group"
+    node_group_name = var.node_group_name
     node_role_arn   = aws_iam_role.worker.arn
     subnet_ids      = [data.aws_subnet.subnet-1.id, data.aws_subnet.subnet-2.id]
     capacity_type   = "ON_DEMAND"
     disk_size       = 20
     instance_types  = ["t2.small"]
 
-    remote_access {
-      ec2_ssh_key               = "provisioner"
-      source_security_group_ids = [data.aws_security_group.selected.id]
-    }
+   
+
 
     labels = {
       env = "dev"
     }
 
+    tags = {
+      Name = "project-eks-node-group"
+    }
+
     scaling_config {
       desired_size = 2
-      max_size     = 4
+      max_size     = 10
       min_size     = 1
     }
 
@@ -193,3 +196,18 @@ data "aws_security_group" "selected" {
       aws_iam_role_policy_attachment.AmazonEC2ContainerRegistryReadOnly,
     ]
   }
+
+# --- OIDC Provider for EKS (for IAM roles for service accounts) ---
+data "aws_eks_cluster" "eks_oidc" {
+  name = aws_eks_cluster.eks.name
+}
+
+data "tls_certificate" "oidc_thumbprint" {
+  url = data.aws_eks_cluster.eks_oidc.identity[0].oidc[0].issuer
+}
+
+resource "aws_iam_openid_connect_provider" "eks_oidc" {
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = [data.tls_certificate.oidc_thumbprint.certificates[0].sha1_fingerprint]
+  url             = data.aws_eks_cluster.eks_oidc.identity[0].oidc[0].issuer
+}

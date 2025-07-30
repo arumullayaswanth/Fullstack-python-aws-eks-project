@@ -7,9 +7,9 @@ terraform {
   }
 
   backend "s3" {
-    bucket = "state-remote-store"
-    key    = "eks/terraform.tfstate"
-    region = "ap-south-1"
+    bucket = "python-state-remote-store-eks"
+    key    = "k8/terraform.tfstate"
+    region = "us-east-1"
   }
 
   required_version = ">= 1.6.3"

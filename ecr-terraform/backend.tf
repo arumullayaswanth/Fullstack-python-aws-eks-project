@@ -7,8 +7,8 @@ terraform {
   }
 
   backend "s3" {
-    bucket = "cloudcore007"
-    key    = "terraform.tfstate"
+    bucket = "python-state-remote-store-eks"
+    key    = "ecr/terraform.tfstate"
     region = "us-east-1"
   }
 

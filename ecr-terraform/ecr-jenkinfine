@@ -1,3 +1,4 @@
+
 pipeline {
     agent any
 
@@ -5,7 +6,7 @@ pipeline {
         choice(
             name: 'ACTION',
             choices: ['apply', 'destroy'],
-            description: '🔧 Select the Terraform action to perform'
+            description: '🔧 Select the Terraform action to perform (apply = create/update, destroy = delete all)'
         )
     }
 
@@ -24,7 +25,7 @@ pipeline {
 
         stage('Terraform init') {
             steps {
-                dir('eks-terraform') {
+                dir('ecr-terraform') {
                     sh 'terraform init --reconfigure'
                 }
             }
@@ -32,7 +33,7 @@ pipeline {
 
         stage('Terraform validate') {
             steps {
-                dir('eks-terraform') {
+                dir('ecr-terraform') {
                     sh 'terraform validate'
                 }
             }
@@ -40,7 +41,7 @@ pipeline {
 
         stage('Terraform plan') {
             steps {
-                dir('eks-terraform') {
+                dir('ecr-terraform') {
                     sh 'terraform plan'
                 }
             }
@@ -51,7 +52,7 @@ pipeline {
                 expression { params.ACTION == 'apply' }
             }
             steps {
-                dir('eks-terraform') {
+                dir('ecr-terraform') {
                     sh 'terraform apply -auto-approve'
                 }
             }
@@ -62,7 +63,7 @@ pipeline {
                 expression { params.ACTION == 'destroy' }
             }
             steps {
-                dir('eks-terraform') {
+                dir('ecr-terraform') {
                     sh 'terraform destroy -auto-approve'
                 }
             }
