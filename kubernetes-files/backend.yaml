@@ -27,13 +27,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: flask-service
+  name: backend-service
   labels:
     app: backend
 spec:
-  type: ClusterIP
+  type: LoadBalancer  # <- Expose to the internet
   selector:
     app: backend
   ports:
-  - port: 5000
-    targetPort: 5000
+  - port: 80           # External port
+    targetPort: 5000   # Internal container port

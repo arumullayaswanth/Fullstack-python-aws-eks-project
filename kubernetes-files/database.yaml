@@ -35,8 +35,8 @@ spec:
           mountPath: /docker-entrypoint-initdb.d
         env:
           - name: POSTGRES_USER
-            value: "postgres"
-          - name: POSTGRES_PASSWORD
+            value: "postgres"   #my database user name
+          - name: POSTGRES_PASSWORD  #my batabase passwaord
             value: "postgres"
       volumes:
         - name: sqlscript
