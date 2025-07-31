@@ -680,7 +680,7 @@ kubectl get namespaces
    - **Application Name:** `project`
    - **Project Name:** `default`
    - **Sync Policy:** `Automatic`
-   - **Repository URL:** `https://github.com/arumullayaswanth/Swiggy-GitOps-project.git`
+   - **Repository URL:** `https://github.com/arumullayaswanth/Fullstack-python-aws-eks-project.git`
    - **Revision:** `HEAD`
    - **Path:** `kubernetes-files`
    - **Cluster URL:** `https://kubernetes.default.svc`
