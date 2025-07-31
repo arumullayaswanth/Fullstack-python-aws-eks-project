@@ -135,9 +135,8 @@ pipeline {
                             BUILD_NUMBER=${BUILD_NUMBER}
                             echo $BUILD_NUMBER
 
-                            # Update only the backend image line
-                            sed -i "/name: flask-backend/{n;s#image:.*#image: ${REPOSITORY_URI}/${AWS_ECR_REPO_NAME}:${BUILD_NUMBER}#}" ${YAML_FILE}
-
+                            # push this image to your git hub
+                            sed -i "s#image:.*#image: ${REPOSITORY_URI}/${AWS_ECR_REPO_NAME}:$BUILD_NUMBER#g" ${YAML_FILE}
                             git add .
                             git commit -m "Update ${AWS_ECR_REPO_NAME} Image to version \${BUILD_NUMBER}"
                             git push https://${git_token}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:master

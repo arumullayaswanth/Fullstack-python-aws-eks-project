@@ -15,9 +15,9 @@ spec:
         app: frontend
     spec:
       containers:
-      - name: react-frontend
+      - name: frontend
         image: 483216680875.dkr.ecr.us-east-1.amazonaws.com/frontend-p:latest
-        imagePullPolicy: Always
+        # imagePullPolicy: Always
         ports:
         - containerPort: 3000
 ---
