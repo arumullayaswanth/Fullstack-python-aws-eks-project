@@ -1,13 +1,13 @@
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pg-init-script
 data:
   CreateDB.sql: |-
     CREATE TABLE text (
         id serial PRIMARY KEY,
-        text VARCHAR ( 100 ) UNIQUE NOT NULL
+        text VARCHAR(100) UNIQUE NOT NULL
     );
-kind: ConfigMap
-metadata:
-  name: pg-init-script
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -16,7 +16,7 @@ metadata:
   labels:
     app: database
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: database
@@ -55,3 +55,4 @@ spec:
     app: database
   ports:
   - port: 5432
+    targetPort: 5432

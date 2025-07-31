@@ -25,8 +25,10 @@ apiVersion: v1
 kind: Service
 metadata:
   name: frontend-service
+  labels:
+    app: frontend
 spec:
-  type: LoadBalancer  # <== changed from NodePort to LoadBalancer
+  type: LoadBalancer
   selector:
     app: frontend
   ports:
