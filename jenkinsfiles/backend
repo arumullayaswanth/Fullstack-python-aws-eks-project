@@ -11,7 +11,6 @@ pipeline {
         AWS_ECR_REPO_NAME = 'backend'                      //replace ECR repository name
         AWS_DEFAULT_REGION = 'us-east-1'                 // replace AWS region
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
-        GIT_REPO_NAME = "Fullstack-python-aws-eks-project"      // replace your github rep name
     }
     stages {
         // no change in this stage
@@ -122,6 +121,7 @@ pipeline {
         // no change in this stage Except dir name=dir('kubernetes-files')
         stage('Update Deployment file') {
             environment  {
+                GIT_REPO_NAME = "Fullstack-python-aws-eks-project"      // replace your github rep name
                 GIT_EMAIL = "yaswanth.arumulla@gmail.com"    //replacr your email id
                 GIT_USER_NAME = "arumullayaswanth"           // replace your user name
                 YAML_FILE = "backend.yaml"
@@ -135,8 +135,9 @@ pipeline {
                             BUILD_NUMBER=${BUILD_NUMBER}
                             echo $BUILD_NUMBER
 
-                            # push this image to your git hub
-                            sed -i "s#image:.*#image: ${REPOSITORY_URI}/${AWS_ECR_REPO_NAME}:$BUILD_NUMBER#g" ${YAML_FILE}
+                            # Update only the backend image line
+                            sed -i "/name: flask-backend/{n;s#image:.*#image: ${REPOSITORY_URI}/${AWS_ECR_REPO_NAME}:${BUILD_NUMBER}#}" ${YAML_FILE}
+
                             git add .
                             git commit -m "Update ${AWS_ECR_REPO_NAME} Image to version \${BUILD_NUMBER}"
                             git push https://${git_token}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:master

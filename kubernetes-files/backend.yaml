@@ -15,14 +15,14 @@ spec:
         app: backend
     spec:
       containers:
-      - name: flask-backend
-        image: 483216680875.dkr.ecr.us-east-1.amazonaws.com/backend-p:latest
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 5000
-        env:
-        - name: DATABASE_URI
-          value: pg-service
+        - name: flask-backend
+          image: 483216680875.dkr.ecr.us-east-1.amazonaws.com/backend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+          env:
+            - name: DATABASE_URI
+              value: pg-service
 ---
 apiVersion: v1
 kind: Service
@@ -31,9 +31,9 @@ metadata:
   labels:
     app: backend
 spec:
-  type: LoadBalancer  # <- Expose to the internet
+  type: LoadBalancer  # Makes the backend accessible from the internet
   selector:
     app: backend
   ports:
-  - port: 80           # External port
-    targetPort: 5000   # Internal container port
+    - port: 80         # Exposed externally
+      targetPort: 5000 # Inside container
